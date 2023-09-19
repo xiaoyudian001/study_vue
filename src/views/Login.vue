@@ -9,7 +9,7 @@
         <el-input v-model="form.password" placeholder="请输入密码" type="password"></el-input>
       </el-form-item>
       <el-form-item class="login-button">
-        <el-button type="primary" @click="onSubmit('form')">登录</el-button>
+        <el-button type="primary" @click="submitForm('form')">登录</el-button>
       </el-form-item>
     </el-form>
   </div>
@@ -39,12 +39,17 @@
       };
     },
     methods: {
-      onSubmit(formName) {
+      submitForm(formName) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
-            this.$router.push("/main");
+            sessionStorage.setItem('isLogin', 'true');
+            this.$store.dispatch("asyncUpdateUser", {name: this.form.name});
+            this.$router.push({name: 'Main', params: {name: this.form.name}});
           } else {
-            this.$message.error('请输入用户名或密码');
+            this.$message({
+              message: '用户名或密码错误',
+              type: 'warning'
+            });
             return false;
           }
         });
@@ -55,17 +60,19 @@
 
 <style scoped>
   .login-box {
-  width: 400px;
-  margin: 200px auto;
-  border: 1px solid #DCDFE6;
-  padding: 40px;
-  border-radius: 10px;
-  box-shadow: 0 0 30px #DCDFE6;
+    width: 400px;
+    margin: 200px auto;
+    border: 1px solid #DCDFE6;
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: 0 0 30px #DCDFE6;
   }
+
   .login-title {
-  text-align: center;
+    text-align: center;
   }
-  .login-button{
+
+  .login-button {
     text-align: center;
   }
 </style>
